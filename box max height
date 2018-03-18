@@ -5,7 +5,7 @@ using namespace std;
 
 int x[MAX],y[MAX];
 int a[MAX][MAX]={0};
-int queue[1000];
+int queue[100];
 int front,rear;
 int in_degree[MAX]={0};
 int dist[MAX]={0};
