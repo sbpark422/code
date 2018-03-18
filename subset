@@ -1,0 +1,45 @@
+#include <iostream>
+
+using namespace std;
+
+int a[26],set[10];
+char c[10];
+
+void DFS(int now);
+
+int main(){
+	char ch;
+	int num,i,cnt=0;
+
+	for(i=0;i<10;i++){
+		cin>>ch;
+		num=ch-65;
+		a[num]++;
+	}
+	for(i=0;i<26;i++){
+		if(a[i]!=0){
+			c[cnt]=i+65;
+			set[cnt]=a[i];
+			cnt++;
+		}
+	}
+	DFS(0);
+}
+
+void DFS(int now){
+	int i,j,k,num;
+
+	num=set[now];
+	for(i=set[now];i>=0;i--){
+		set[now]=i;
+		if(now+1==10) {
+			cout<<"{";
+			for(j=0;j<10;j++){
+				for(k=0;k<set[j];k++) cout<<c[j];
+			}
+			cout<<"} ";
+		}
+		if(now+1<10) DFS(now+1);
+		set[now]=num;
+	}
+}
