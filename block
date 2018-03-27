@@ -1,0 +1,103 @@
+#include<iostream>
+#include<algorithm>
+#define MAX 20
+
+using namespace std;
+
+typedef struct rect
+{
+  int h, w, d;  //h:높이 w:세로 d:가로
+
+}rect;
+ 
+rect box[MAX];
+rect boxes[3*MAX];
+rect stack[MAX];
+int height[MAX];
+int set[MAX];
+int final_max=-1;
+
+
+bool compare(rect a, rect b) { 
+    if (a.d*a.w == b.d*b.w) {  
+      return a.d > b.d; } 
+    else  
+      return a.d*a.w > b.d*b.w;}
+
+void max_height()
+{
+   sort(stack, stack+MAX, compare);
+
+   for (int i = 0; i < MAX; i++ ){
+      height[i] = stack[i].h;
+   }
+
+   for (int i = 1; i < MAX; i++ )
+      for (int j = 0; j < i; j++ ){
+         if ( stack[i].w <= stack[j].w &&stack[i].d <= stack[j].d && height[i] < height[j] + stack[i].h ){
+              height[i] = height[j] + stack[i].h;
+		 }
+	  }
+ 
+   int max = -1;
+
+   for ( int i = 0; i < 3*MAX; i++ )
+      if ( max < height[i] ){
+         max = height[i];
+		 }
+ 
+	if(final_max<max) final_max=max;
+}
+
+void DFS(int now){
+	int i,num;
+	
+	num=set[now];
+	for(i=set[now];i>=0;i--){
+		set[now]=i;
+		if(now+1==MAX) {
+			for(int j=0;j<MAX;j++){
+				stack[j].d=boxes[3*j+set[j]].d;
+				stack[j].w=boxes[3*j+set[j]].w;
+				stack[j].h=boxes[3*j+set[j]].h;
+			}
+			max_height();	
+		}
+		if(now+1<MAX) DFS(now+1);
+		set[now]=num;
+	}
+}
+
+ 
+int main(void)
+{
+   int a, b, c ; 
+    for (int i = 0; i < MAX; i++) {
+        cin>>a>>b>>c;
+        box[i].h = a;   
+        box[i].d = b; 
+	    box[i].w = c; 
+		set[i]=2;
+	}  
+
+   for (int i = 0; i < MAX; i++)
+   {
+      boxes[3*i].h = box[i].h;
+      boxes[3*i].d = max(box[i].d, box[i].w);
+      boxes[3*i].w = min(box[i].d, box[i].w);
+
+      boxes[3*i+1].h = box[i].w;
+      boxes[3*i+1].d = max(box[i].h, box[i].d);
+      boxes[3*i+1].w = min(box[i].h, box[i].d);
+
+      boxes[3*i+2].h = box[i].d;
+      boxes[3*i+2].d = max(box[i].h, box[i].w);
+      boxes[3*i+2].w = min(box[i].h, box[i].w);
+
+   }
+
+   DFS(0);
+   cout<<"최대높이 : "<<final_max<<endl;
+ 
+  return 0;
+}
